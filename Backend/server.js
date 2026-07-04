@@ -7,24 +7,10 @@ const path = require("path");
 dotenv.config();
 const app = express();
 
-// Allow requests from local dev AND the deployed Vercel frontend
-const allowedOrigins = [
-  "http://localhost:3000",
-  "http://localhost:5000",
-  process.env.FRONTEND_URL,
-].filter(Boolean);
-
+// CORS — allow Vercel frontend + localhost
 app.use(
   cors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (Postman, curl, mobile apps)
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) return callback(null, true);
-      // In development or if no FRONTEND_URL set, allow all
-      if (!process.env.FRONTEND_URL) return callback(null, true);
-      console.warn(`CORS blocked origin: ${origin}`);
-      callback(new Error(`CORS blocked: ${origin}`));
-    },
+    origin: true, // reflect the request origin — works for all origins
     credentials: true,
   })
 );
