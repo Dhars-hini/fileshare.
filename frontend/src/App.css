@@ -1,0 +1,32 @@
+.navbar {
+    background-color: #333;
+    padding: 10px;
+  }
+  
+  .nav-links {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center; /* Align links horizontally */
+  }
+  
+  .nav-links li {
+    margin-right: 20px; /* Adjust spacing between links */
+  }
+  
+  .nav-links li:last-child {
+    margin-right: 0; /* Remove margin from last link */
+  }
+  
+  .nav-links li a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px; /* Adjust font size */
+    padding: 10px; /* Adjust padding */
+  }
+  
+  .nav-links li a:hover {
+    text-decoration: underline;
+  }
+  
