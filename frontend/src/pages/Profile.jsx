@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { axiosInstance, authHeader, SERVER_BASE } from "../utils/api";
 
 const SERVER = SERVER_BASE;
@@ -20,7 +20,7 @@ const Profile = () => {
     setTimeout(() => setMsg({ type: "", text: "" }), 3500);
   };
 
-  const fetchUser = async () => {
+  const fetchUser = useCallback(async () => {
     try {
       const res = await axiosInstance.get("/auth/me", { headers: authHeader() });
       setUser(res.data);
@@ -33,9 +33,10 @@ const Profile = () => {
     } catch {
       showMsg("error", "Failed to load profile");
     }
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  useEffect(() => { fetchUser(); }, []);
+  useEffect(() => { fetchUser(); }, [fetchUser]);
 
   // ── Avatar pick ──────────────────────────────────────────────────────────────
   const handleAvatarChange = (e) => {
