@@ -98,14 +98,20 @@ exports.uploadAvatar = async (req, res) => {
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ msg: "User not found" });
 
-    // Delete old avatar file if it exists
-    if (user.avatar) {
-      const oldPath = path.join(__dirname, "..", user.avatar);
-      if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+    // Delete old avatar from Cloudinary if exists
+    if (user.avatarCloudId) {
+      try {
+        await require("../config/cloudinary").cloudinary.uploader.destroy(
+          user.avatarCloudId, { resource_type: "image" }
+        );
+      } catch (e) {
+        console.warn("Old avatar delete failed:", e.message);
+      }
     }
 
-    const avatarPath = "uploads/avatars/" + req.file.filename;
-    user.avatar = avatarPath;
+    // multer-storage-cloudinary puts the URL in file.path and public_id in file.filename
+    user.avatar       = req.file.path;       // Cloudinary URL
+    user.avatarCloudId = req.file.filename;  // Cloudinary public_id
     await user.save();
 
     const updated = await User.findById(req.user.id).select("-password");

@@ -1,7 +1,7 @@
 const express = require("express");
-const multer = require("multer");
-const path = require("path");
-const auth = require("../middlewares/authMiddleware");
+const multer  = require("multer");
+const auth    = require("../middlewares/authMiddleware");
+const { fileStorage } = require("../config/cloudinary");
 
 const {
   uploadFiles,
@@ -9,27 +9,25 @@ const {
   deleteFile,
   shareFile,
   accessSharedFile,
-  downloadZip
+  downloadZip,
 } = require("../controllers/fileController");
 
 const router = express.Router();
 
-const storage = multer.diskStorage({
-  destination: "./uploads/",
-  filename: (req, file, cb) =>
-    cb(null, Date.now() + "-" + file.originalname)
+// Multer using Cloudinary storage — 50 MB per file, 20 files max
+const upload = multer({
+  storage: fileStorage,
+  limits: { fileSize: 50 * 1024 * 1024 },
 });
 
-const upload = multer({ storage });
-
 // Protected
-router.post("/upload", auth, upload.array("files"), uploadFiles);
-router.get("/", auth, getFiles);
-router.delete("/:id", auth, deleteFile);
+router.post("/upload", auth, upload.array("files", 20), uploadFiles);
+router.get("/",        auth, getFiles);
+router.delete("/:id",  auth, deleteFile);
 router.post("/share/:id", auth, shareFile);
-router.post("/zip", auth, downloadZip);
+router.post("/zip",    auth, downloadZip);
 
-// Public
+// Public shared link
 router.get("/shared/:shareId", accessSharedFile);
 
 module.exports = router;

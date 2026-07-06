@@ -5,7 +5,8 @@ const userSchema = new mongoose.Schema(
     name:     { type: String, required: true },
     email:    { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    avatar:   { type: String, default: "" },        // relative path e.g. uploads/avatars/xxx.jpg
+    avatar:        { type: String, default: "" },  // Cloudinary URL
+    avatarCloudId: { type: String, default: "" },  // Cloudinary public_id
     bio:      { type: String, default: "" },
     phone:    { type: String, default: "" },
     role:     { type: String, enum: ["user", "admin"], default: "user" },
